@@ -60,10 +60,32 @@ func (g *Game) Update() error {
 
 		if b.X < 0 || b.X > ScreenWidth {
 			b.DX = -b.DX
+			if b.X < 0 {
+				b.X = 0
+			}
+			if b.X > ScreenWidth {
+				b.X = ScreenWidth
+			}
 		}
 
 		if b.Y < 0 || b.Y > ScreenHeight {
 			b.DY = -b.DY
+			if b.Y < 0 {
+				b.Y = 0
+			}
+			if b.Y > ScreenHeight {
+				b.Y = ScreenHeight
+			}
+		}
+		gridX := int(b.X / TileSize)
+		gridY := int(b.Y / TileSize)
+
+		if gridX >= 0 && gridX < Cols && gridY >= 0 && gridY < Rows {
+			if g.Grid[gridX][gridY] != b.Color {
+				g.Grid[gridX][gridY] = b.Color
+				b.DX = -b.DX
+				b.DY = -b.DY
+			}
 		}
 	}
 	return nil
