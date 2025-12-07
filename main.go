@@ -5,6 +5,7 @@ import (
 	"image/color"
 	"log"
 	"math/rand"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
@@ -18,7 +19,7 @@ const (
 	Rows            = ScreenHeight / TileSize
 	InitialSpeed    = 4.0
 	SpeedMultiplier = 1.1
-	MaxSpeed        = 20.0
+	MaxSpeed        = 15.0
 )
 
 var (
@@ -40,6 +41,7 @@ type Game struct {
 
 func NewGame() *Game {
 	g := &Game{}
+	rand.Seed(time.Now().UnixNano())
 
 	for x := 0; x < Cols; x++ {
 		for y := 0; y < Rows; y++ {
@@ -59,12 +61,13 @@ func NewGame() *Game {
 	}
 
 	g.Ball = append(g.Ball, &Ball{
-		X: 200, Y: 400,
+		X: 200, Y: 300,
 		DX: randomDir(), DY: randomDir(),
 		Color: ColorNight,
 	})
+
 	g.Ball = append(g.Ball, &Ball{
-		X: 600, Y: 400,
+		X: 600, Y: 300,
 		DX: randomDir(), DY: randomDir(),
 		Color: ColorDay,
 	})
