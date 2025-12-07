@@ -21,6 +21,7 @@ const (
 	InitialSpeed    = 4.0
 	SpeedMultiplier = 1.1
 	MaxSpeed        = 20.0
+	MinSpeed        = 2.0
 )
 
 var (
@@ -121,26 +122,41 @@ func (g *Game) Update() error {
 					g.Grid[gridX][gridY] = ColorDay
 				}
 
-				b.DX *= SpeedMultiplier
-				b.DY *= SpeedMultiplier
-
-				if b.DX > MaxSpeed {
-					b.DX = MaxSpeed
-				}
-				if b.DX < -MaxSpeed {
-					b.DX = -MaxSpeed
-				}
-				if b.DY > MaxSpeed {
-					b.DY = MaxSpeed
-				}
-				if b.DY < -MaxSpeed {
-					b.DY = -MaxSpeed
-				}
-
 				b.DX = -b.DX
 				b.DY = -b.DY
 			}
 		}
+
+		b.DX += (rand.Float64() * 0.02) - 0.01
+		b.DY += (rand.Float64() * 0.02) - 0.01
+
+		if b.DX > MaxSpeed {
+			b.DX = MaxSpeed
+		}
+		if b.DX < -MaxSpeed {
+			b.DX = -MaxSpeed
+		}
+		if b.DY > MaxSpeed {
+			b.DY = MaxSpeed
+		}
+		if b.DY < -MaxSpeed {
+			b.DY = -MaxSpeed
+		}
+
+		if b.DX > 0 && b.DX < MinSpeed {
+			b.DX = MinSpeed
+		}
+		if b.DX < 0 && b.DX > -MinSpeed {
+			b.DX = -MinSpeed
+		}
+
+		if b.DY > 0 && b.DY < MinSpeed {
+			b.DY = MinSpeed
+		}
+		if b.DY < 0 && b.DY > -MinSpeed {
+			b.DY = -MinSpeed
+		}
+
 	}
 
 	dayCount, nightCount := 0, 0
