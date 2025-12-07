@@ -81,8 +81,12 @@ func (g *Game) Update() error {
 		gridY := int(b.Y / TileSize)
 
 		if gridX >= 0 && gridX < Cols && gridY >= 0 && gridY < Rows {
-			if g.Grid[gridX][gridY] != b.Color {
-				g.Grid[gridX][gridY] = b.Color
+			if g.Grid[gridX][gridY] == b.Color {
+				if b.Color == ColorDay {
+					g.Grid[gridX][gridY] = ColorNight
+				} else {
+					g.Grid[gridX][gridY] = ColorDay
+				}
 				b.DX = -b.DX
 				b.DY = -b.DY
 			}
