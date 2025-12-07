@@ -1,19 +1,24 @@
 package main
 
 import (
+	"fmt"
 	"image/color"
 	"log"
+	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
 const (
-	ScreenWidth  = 800
-	ScreenHeight = 800
-	TileSize     = 20
-	Cols         = ScreenWidth / TileSize
-	Rows         = ScreenHeight / TileSize
+	ScreenWidth     = 800
+	ScreenHeight    = 600
+	TileSize        = 20
+	Cols            = ScreenWidth / TileSize
+	Rows            = ScreenHeight / TileSize
+	InitialSpeed    = 4.0
+	SpeedMultiplier = 1.1
+	MaxSpeed        = 20.0
 )
 
 var (
@@ -46,8 +51,23 @@ func NewGame() *Game {
 		}
 	}
 
-	g.Ball = append(g.Ball, &Ball{X: 200, Y: 400, DX: 4, DY: 4, Color: ColorNight})
-	g.Ball = append(g.Ball, &Ball{X: 600, Y: 400, DX: -4, DY: -4, Color: ColorDay})
+	randomDir := func() float64 {
+		if rand.Intn(2) == 0 {
+			return InitialSpeed
+		}
+		return -InitialSpeed
+	}
+
+	g.Ball = append(g.Ball, &Ball{
+		X: 200, Y: 400,
+		DX: randomDir(), DY: randomDir(),
+		Color: ColorNight,
+	})
+	g.Ball = append(g.Ball, &Ball{
+		X: 600, Y: 400,
+		DX: randomDir(), DY: randomDir(),
+		Color: ColorDay,
+	})
 
 	return g
 }
@@ -82,15 +102,45 @@ func (g *Game) Update() error {
 
 		if gridX >= 0 && gridX < Cols && gridY >= 0 && gridY < Rows {
 			if g.Grid[gridX][gridY] == b.Color {
+
 				if b.Color == ColorDay {
 					g.Grid[gridX][gridY] = ColorNight
 				} else {
 					g.Grid[gridX][gridY] = ColorDay
 				}
+
+				b.DX *= SpeedMultiplier
+				b.DY *= SpeedMultiplier
+
+				if b.DX > MaxSpeed {
+					b.DX = MaxSpeed
+				}
+				if b.DX < -MaxSpeed {
+					b.DX = -MaxSpeed
+				}
+				if b.DY > MaxSpeed {
+					b.DY = MaxSpeed
+				}
+				if b.DY < -MaxSpeed {
+					b.DY = -MaxSpeed
+				}
+
 				b.DX = -b.DX
 				b.DY = -b.DY
 			}
 		}
+
+		dayCount, nightCount := 0, 0
+		for x := 0; x < Cols; x++ {
+			for y := 0; y < Rows; y++ {
+				if g.Grid[x][y] == ColorDay {
+					dayCount++
+				} else {
+					nightCount++
+				}
+			}
+		}
+		ebiten.SetWindowTitle(fmt.Sprintf("Pong Wars | Day: %d | Night: %d", dayCount, nightCount))
 	}
 	return nil
 }
